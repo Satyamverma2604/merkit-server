@@ -5,10 +5,9 @@ RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn clean package -DskipTests
 RUN ls -la target
-RUN find target -maxdepth 1 -name "*.jar" ! -name "*-plain.jar" ! -name "*.original" -exec cp {} /app/app.jar \;
 
 FROM eclipse-temurin:25-jre
 WORKDIR /app
-COPY --from=build /app/app.jar /app/app.jar
+COPY --from=build /app/target/*.war app.war
 EXPOSE 8080
-ENTRYPOINT ["java", "-Xmx300m", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Xmx300m", "-jar", "app.war"]
